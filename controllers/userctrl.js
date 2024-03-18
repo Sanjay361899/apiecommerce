@@ -40,13 +40,21 @@ const allUser=asyncHandler(async(req,res)=>{
         throw new Error(error?.message)
     }
 })
+const updateUser=asyncHandler(async(req,res)=>{
+    try {
+        const data= await userModel.findByIdAndUpdate({_id:req.body.id},{email:req?.body?.email,mobile:req?.body?.mobile},{new:true});
+        res.status(200).send({message:"this data is updated as per your given data.",updatedInfo:data})
+    } catch (error) {
+        throw new Error(error?.message)
+    }
+})
 const deleteUser=asyncHandler(async(req,res)=>{
     try {
-      const data=  await userModel.findByIdAndDelete(req?.body?.id)
+      const data=  await userModel.findByIdAndDelete({_id:req?.body?.id})
       console.log(data,"data is get")
       res.status(200).send({message:"Data is deleted."})
     } catch (error) {
         throw new Error(error?.message)
     }
 })
-module.exports={userRegister,userLogin,allUser,deleteUser}
+module.exports={userRegister,userLogin,allUser,deleteUser,updateUser}
