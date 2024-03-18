@@ -1,6 +1,6 @@
+const userModel = require("../models/userModel.js")
 const asyncHandler=require("express-async-handler")
-const userModel = require("../models/userModel")
-const userRegister=asyncHandler(async(req,res)=>{
+const userRegister=async(req,res)=>{
     try {
         const findData= await userModel.findOne({email:req.body.email})
         if(!findData){
@@ -13,5 +13,5 @@ const userRegister=asyncHandler(async(req,res)=>{
     } catch (error) {
         throw new Error(error?.message)
     }
-});
+};
 module.exports={userRegister}
