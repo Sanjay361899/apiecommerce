@@ -19,6 +19,8 @@ var userSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
+    address:[{type:mongoose.Schema.Types.ObjectId,ref:""}],
+    cart:[{type:mongoose.Schema.Types.ObjectId,ref:""}],
 });
 
 //Export the model
