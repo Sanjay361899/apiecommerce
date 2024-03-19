@@ -19,8 +19,20 @@ var userSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    address:[{type:mongoose.Schema.Types.ObjectId,ref:""}],
-    cart:[{type:mongoose.Schema.Types.ObjectId,ref:""}],
+    role:{
+        type:String,
+        default:"User"
+    },
+    cart:{
+        type:Array,
+        default:[]
+    },
+    isBlocked:{
+        type:Boolean,
+        default:false
+    },
+    address:[{type:mongoose.Schema.Types.ObjectId,ref:"Address"}],
+    wishList:[{type:mongoose.Schema.Types.ObjectId,ref:"Product"}],
 });
 
 //Export the model

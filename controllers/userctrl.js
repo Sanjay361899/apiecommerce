@@ -1,12 +1,15 @@
 const userModel = require("../models/userModel.js")
 const asyncHandler=require("express-async-handler")
+var jwt = require('jsonwebtoken');
 const userRegister=asyncHandler(async(req,res)=>{
     try {
         const findData= await userModel.findOne({email:req.body.email})
         if(!findData){
            const createNewUser=await userModel.create(req.body)
-           await createNewUser.save()
-           res.status(200).send({message:"record is stored in db", data:createNewUser})
+           const data=await createNewUser.save()
+           var token = jwt.sign({ id: data._id }, process.env.JWT_SECRET_KEY);
+
+           res.status(200).send({message:"record is stored in db", data:createNewUser,token})
         }else{
             throw new Error("User With this email already Existing")
         }
@@ -19,7 +22,9 @@ const userLogin=asyncHandler(async(req,res)=>{
     try {
         const findData= await userModel.findOne({email:req.body.email , password:req.body.password})
         if(findData){
-           res.status(200).send({message:"record fetched of the login", data:findData})
+           var token = jwt.sign({ id: findData._id }, process.env.JWT_SECRET_KEY);
+
+           res.status(200).send({message:"record fetched of the login", data:findData,token})
         }else{
             throw new Error("Invalid email or password")
         }
