@@ -115,13 +115,21 @@ const handleCookiess=asyncHandler(async(req,res)=>{
 })
 const handleLogout=asyncHandler(async(req,res)=>{
     const cookies = req.cookies.refreshToken; 
+    console.log(cookies);
     if(!cookies) throw new Error("there is no such referesh token present here.")
     const user= await userModel.findOne({refreshToken:cookies})
-if(user) await userModel.findOneAndUpdate(refreshToken,{refreshToken:""})
+if(user){
+    await userModel.findOneAndUpdate({refreshToken:cookies},{refreshToken:""})
+    res.clearCookie("refreshToken",{
+        httpOnly:true,
+        secure:true
+    });
+    return res.status(204).send("success")
+}
 res.clearCookie("refreshToken",{
     httpOnly:true,
     secure:true
 });
-return res.status(204) //forbidden
-})
+return res.status(204).send("success") //forbidden
+});
 module.exports={userRegister,userLogin,allUser,deleteUser,updateUser,getSingleUser,blockUser,unblockUser,handleCookiess,handleLogout}
