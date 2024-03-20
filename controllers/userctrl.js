@@ -100,7 +100,28 @@ const unblockUser= asyncHandler(async(req,res)=>{
     }
 })
 const handleCookiess=asyncHandler(async(req,res)=>{
-    const cokkies=req.cookies
-    console.log(cokkies,"cokkies");
+    // const cokkies=req.cookies
+    const cookies = req.cookies.refreshToken; 
+    console.log(cookies,"cokkies");
+    const user=await userModel.findOne({refreshToken:cookies})
+    if(!user) throw new Error("There is no such user exist which have this refresh token.");
+    jwt.verify(cookies,process.env.JWT_SECRET_KEY,(error,decode)=>{
+        if(error||user._id!=decode.id){
+            throw new Error("there is something wrong in referesh token")
+        }
+        const token=jwtoken(user?._id);
+        res.json({accessToken:token});
+    })
 })
-module.exports={userRegister,userLogin,allUser,deleteUser,updateUser,getSingleUser,blockUser,unblockUser,handleCookiess}
+const handleLogout=asyncHandler(async(req,res)=>{
+    const cookies = req.cookies.refreshToken; 
+    if(!cookies) throw new Error("there is no such referesh token present here.")
+    const user= await userModel.findOne({refreshToken:cookies})
+if(user) await userModel.findOneAndUpdate(refreshToken,{refreshToken:""})
+res.clearCookie("refreshToken",{
+    httpOnly:true,
+    secure:true
+});
+return res.status(204) //forbidden
+})
+module.exports={userRegister,userLogin,allUser,deleteUser,updateUser,getSingleUser,blockUser,unblockUser,handleCookiess,handleLogout}
